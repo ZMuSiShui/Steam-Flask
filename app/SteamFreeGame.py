@@ -306,4 +306,4 @@ def test_render():
 if __name__ == '__main__':
     print('start server')
     # test_render()
-    app.run(host='0.0.0.0', port=5555, debug=False)
+    app.run(host='0.0.0.0', port=8080, debug=False)
