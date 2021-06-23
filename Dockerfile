@@ -5,7 +5,7 @@ MAINTAINER MuSiShui <zhangjieepic@gmail.com>
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update
-RUN apt-get install -y python3 python-pip python-pip3 supervisor gunicorn
+RUN apt-get install -y python3 supervisor gunicorn
 
 # Setup flask application
 RUN mkdir -p /deploy/app
