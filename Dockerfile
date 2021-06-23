@@ -6,6 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update
 RUN apt-get install -y supervisor gunicorn
+RUN python
 
 # Setup flask application
 RUN mkdir -p /deploy/app
