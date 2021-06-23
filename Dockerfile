@@ -5,7 +5,7 @@ MAINTAINER MuSiShui <zhangjieepic@gmail.com>
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update
-RUN apt-get install -y python3 python-pip supervisor gunicorn
+RUN apt-get install -y python supervisor gunicorn
 
 # Setup flask application
 RUN mkdir -p /deploy/app
@@ -19,9 +19,9 @@ RUN pip install -r /deploy/app/requirements.txt
 # RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
 # Setup supervisord
-RUN mkdir -p /var/log/supervisor
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY gunicorn.conf /etc/supervisor/conf.d/gunicorn.conf
+# RUN mkdir -p /var/log/supervisor
+# COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# COPY gunicorn.conf /etc/supervisor/conf.d/gunicorn.conf
 
 # Start processes
-CMD ["/usr/bin/supervisord"]
+CMD ["python", "/deploy/app/SteamFreeGame.py"]
