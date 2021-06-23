@@ -10,8 +10,6 @@ RUN apt-get install -y python3 python3-pip supervisor gunicorn
 # Setup flask application
 RUN mkdir -p /deploy/app
 COPY app /deploy/app
-RUN pip3 -V
-RUN pip -V
 RUN pip3 install -r /deploy/app/requirements.txt
 
 # Setup nginx
