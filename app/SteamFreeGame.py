@@ -11,13 +11,14 @@ import requests
 from requests_html import HTMLSession
 from bs4.element import Tag
 from bs4 import BeautifulSoup
-
+import urllib3
 from config import STEAM_URL, GET_LICENSES_URL, DELIVERY_AREA, GAME_APP_ID
 
 app = Flask(__name__)
 
 GAME_URL = ""
 GAME_Packet_ID = ""
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def proxy_pass_request(redirect_url, request_method, request_params):
