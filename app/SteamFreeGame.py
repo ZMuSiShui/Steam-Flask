@@ -296,12 +296,12 @@ def get_with_gameid(gameid):
     print('receive params %s' % request_params)
     return data_deal(request_params)
 
-def test_render():
-    headers = {'Host': 'store.steampowered.com', 'Connection': 'keep-alive', 'Pragma': 'no-cache', 'Cache-Control': 'no-cache', 'Sec-Ch-Ua': '"Chromium";v="86", "\\"Not\\\\A;Brand";v="99", "Google Chrome";v="86"', 'Sec-Ch-Ua-Mobile': '?0', 'Upgrade-Insecure-Requests': '1',
-               'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9', 'Sec-Fetch-Site': 'none', 'Sec-Fetch-Mode': 'navigate', 'Sec-Fetch-User': '?1', 'Sec-Fetch-Dest': 'document', 'Accept-Language': 'zh-CN,zh;q=0.9'}
-    session = HTMLSession()
-    resp = session.get(GAME_URL, headers=headers, verify=False)
-    return resp
+# def test_render():
+#     headers = {'Host': 'store.steampowered.com', 'Connection': 'keep-alive', 'Pragma': 'no-cache', 'Cache-Control': 'no-cache', 'Sec-Ch-Ua': '"Chromium";v="86", "\\"Not\\\\A;Brand";v="99", "Google Chrome";v="86"', 'Sec-Ch-Ua-Mobile': '?0', 'Upgrade-Insecure-Requests': '1',
+#                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9', 'Sec-Fetch-Site': 'none', 'Sec-Fetch-Mode': 'navigate', 'Sec-Fetch-User': '?1', 'Sec-Fetch-Dest': 'document', 'Accept-Language': 'zh-CN,zh;q=0.9'}
+#     session = HTMLSession()
+#     resp = session.get(GAME_URL, headers=headers, verify=False)
+#     return resp
 
 
 if __name__ == '__main__':
