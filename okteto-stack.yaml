@@ -1,0 +1,7 @@
+services:
+  flask:
+    build: 
+      target: python
+      context: .
+    ports:
+      - 8080:8080
