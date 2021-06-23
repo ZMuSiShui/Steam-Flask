@@ -18,7 +18,7 @@ app = Flask(__name__)
 
 GAME_URL = ""
 GAME_Packet_ID = ""
-
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def proxy_pass_request(redirect_url, request_method, request_params):
 
