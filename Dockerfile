@@ -13,10 +13,10 @@ COPY app /deploy/app
 RUN pip3 install -r /deploy/app/requirements.txt
 
 # Setup nginx
-RUN rm /etc/nginx/sites-enabled/default
-COPY flask.conf /etc/nginx/sites-available/
-RUN ln -s /etc/nginx/sites-available/flask.conf /etc/nginx/sites-enabled/flask.conf
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+# RUN rm /etc/nginx/sites-enabled/default
+# COPY flask.conf /etc/nginx/sites-available/
+# RUN ln -s /etc/nginx/sites-available/flask.conf /etc/nginx/sites-enabled/flask.conf
+# RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
 # Setup supervisord
 RUN mkdir -p /var/log/supervisor
