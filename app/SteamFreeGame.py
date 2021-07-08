@@ -15,6 +15,7 @@ import urllib3
 from config import STEAM_URL, GET_LICENSES_URL, DELIVERY_AREA, GAME_APP_ID
 
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 
 GAME_URL = ""
 GAME_Packet_ID = ""
@@ -188,7 +189,7 @@ def generate_format_cookies(origin_cookie_str):
     return cookies
 
 
-@app.route('/app/<gameid>/<gamename>/')
+@app.route('/app/<gameid>/<gamename>')
 def get_with_gameid_and_gamename(gameid, gamename):
     global GAME_URL
     global GAME_Packet_ID
@@ -242,7 +243,7 @@ def get_with_gameid_and_gamename(gameid, gamename):
     print('receive params %s' % request_params)
     return data_deal(request_params)
 
-@app.route('/app/<gameid>/')
+@app.route('/app/<gameid>')
 def get_with_gameid(gameid):
     global GAME_URL
     global GAME_Packet_ID
