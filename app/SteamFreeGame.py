@@ -12,6 +12,7 @@ from requests_html import HTMLSession
 from bs4.element import Tag
 from bs4 import BeautifulSoup
 import urllib3
+
 from config import STEAM_URL, GET_LICENSES_URL, DELIVERY_AREA, GAME_APP_ID
 
 app = Flask(__name__)
@@ -63,25 +64,35 @@ def check_should_delivery_game(account_id, delivery_area, game_app_id, request_p
 
 def generate_delivery_game_script(delivery, delivery_area, session_id, game_app_id):
     if delivery:
-        origin_js = """jQuery.ajax({
-            url: '/account/setcountry',
-            data: {
-                sessionid: '%s',
-                cc: '%s'
-            },
-            async: false,
-            type: 'POST',
-            success: function() {
-                jQuery.post('/checkout/addfreelicense', {
-                    action: 'add_to_cart',
+        origin_js = """
+let sleep = (time) => new Promise((resolve) => {
+    setTimeout(resolve, time)
+})
+
+jQuery.post('https://store.steampowered.com/account/setcountry/', {
+    sessionid: '%s',
+    cc: '%s'
+})
+sleep(500).then(() => {
+    console.log("第一次领取")
+    jQuery.post('https://store.steampowered.com/checkout/addfreelicense', {
+        action: 'add_to_cart',
                     sessionid: '%s',
                     subid: '%s'
-                });
-                window.location.href = window.location.href;
-            }
-        })""" % (
+    })
+})
+sleep(1000).then(() => {
+    console.log("第二次领取")
+    jQuery.post('https://store.steampowered.com/checkout/addfreelicense', {
+        action: 'add_to_cart',
+                    sessionid: '%s',
+                    subid: '%s'
+    })
+})""" % (
             session_id,
             delivery_area,
+            session_id,
+            game_app_id,
             session_id,
             game_app_id
         )
@@ -190,7 +201,7 @@ def generate_format_cookies(origin_cookie_str):
 
 
 @app.route('/app/<gameid>/<gamename>')
-def get_with_gameid_and_gamename(gameid, gamename):
+def steam_data_proxy_pass(gameid, gamename):
     global GAME_URL
     global GAME_Packet_ID
     GAME_URL = STEAM_URL + f"/app/{gameid}/{gamename}/"
@@ -244,7 +255,7 @@ def get_with_gameid_and_gamename(gameid, gamename):
     return data_deal(request_params)
 
 @app.route('/app/<gameid>')
-def get_with_gameid(gameid):
+def steam_gameid_proxy_pass(gameid):
     global GAME_URL
     global GAME_Packet_ID
     GAME_URL = STEAM_URL + f"/app/{gameid}/"
@@ -297,15 +308,15 @@ def get_with_gameid(gameid):
     print('receive params %s' % request_params)
     return data_deal(request_params)
 
-# def test_render():
-#     headers = {'Host': 'store.steampowered.com', 'Connection': 'keep-alive', 'Pragma': 'no-cache', 'Cache-Control': 'no-cache', 'Sec-Ch-Ua': '"Chromium";v="86", "\\"Not\\\\A;Brand";v="99", "Google Chrome";v="86"', 'Sec-Ch-Ua-Mobile': '?0', 'Upgrade-Insecure-Requests': '1',
-#                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9', 'Sec-Fetch-Site': 'none', 'Sec-Fetch-Mode': 'navigate', 'Sec-Fetch-User': '?1', 'Sec-Fetch-Dest': 'document', 'Accept-Language': 'zh-CN,zh;q=0.9'}
-#     session = HTMLSession()
-#     resp = session.get(GAME_URL, headers=headers, verify=False)
-#     return resp
+def test_render():
+    headers = {'Host': 'store.steampowered.com', 'Connection': 'keep-alive', 'Pragma': 'no-cache', 'Cache-Control': 'no-cache', 'Sec-Ch-Ua': '"Chromium";v="86", "\\"Not\\\\A;Brand";v="99", "Google Chrome";v="86"', 'Sec-Ch-Ua-Mobile': '?0', 'Upgrade-Insecure-Requests': '1',
+               'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9', 'Sec-Fetch-Site': 'none', 'Sec-Fetch-Mode': 'navigate', 'Sec-Fetch-User': '?1', 'Sec-Fetch-Dest': 'document', 'Accept-Language': 'zh-CN,zh;q=0.9'}
+    session = HTMLSession()
+    resp = session.get(GAME_URL, headers=headers, verify=False)
+    return resp
 
 
 if __name__ == '__main__':
     print('start server')
     # test_render()
-    app.run(host='0.0.0.0', port=8080, debug=False)
+    app.run(host='0.0.0.0', port=5555, debug=False)
