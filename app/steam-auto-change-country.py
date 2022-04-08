@@ -1,4 +1,3 @@
-# author: luoxuan
 # coding: utf-8
 from email.policy import default
 import re
@@ -18,7 +17,7 @@ app = Flask(__name__)
 app.url_map.strict_slashes = False
 
 STEAM_URL = "https://store.steampowered.com"
-DELIVERY_AREA = "US"
+DELIVERY_AREA = "HK"
 
 GAME_URL = ""
 
@@ -40,18 +39,23 @@ def proxy_pass_request(redirect_url, request_method, request_params):
 # 注入国家更改脚本
 
 
-def generate_delivery_game_script(delivery_area, session_id):
-    
+def generate_delivery_game_script(delivery_area, session_id, steam_country):
+    notes = ""
+    # print(steam_country)
+    if DELIVERY_AREA in steam_country:
+        notes = r"//"
     origin_js = """
 jQuery.post('https://store.steampowered.com/account/setcountry/', {
     sessionid: '%s',
     cc: '%s'
+}, function(result) {
+    %s window.location.reload()
 })
 """ % (
             session_id,
-            delivery_area
+            delivery_area,
+            notes
         )
-
     
     return origin_js
 
@@ -61,8 +65,10 @@ jQuery.post('https://store.steampowered.com/account/setcountry/', {
 def get_steam_params_from_response(response_content):
     """
         var g_AccountID = 86433468;
-            var g_sessionID = "32ef6dfb0621ece4f257501d";
-            var g_ServerTime = 1624366269;
+        var g_sessionID = "32ef6dfb0621ece4f257501d";
+        var g_ServerTime = 1624366269;
+        GDynamicStore.Init( 86433468, false, "win", {"primary_language":6,"secondary_languages":128,"platform_windows":1,"platform_mac":0,"platform_linux":0,"hide_adult_content_violence":0,"hide_adult_content_sex":0,"timestamp_updated":1642679434,"hide_store_broadcast":0,"review_score_preference":0,"timestamp_content_descriptor_preferences_updated":1536395468,"provide_deck_feedback":0}, 'CN',
+			{"bNoDefaultDescriptors":false} );
     """
     session_id_str = re.search(r'var g_sessionID = "(\w+?)";',
                                response_content)
@@ -72,14 +78,22 @@ def get_steam_params_from_response(response_content):
     account_id_str = re.search(r'var g_AccountID = (\w+?);',
                                response_content)
 
+    steam_country_str1 = re.search(r'provide_deck_feedback(.*)', response_content)
+    steam_country_str = re.search(r", '(.*)", steam_country_str1)
+    if not steam_country_str:
+        return False
     if not account_id_str:
         return False
 
     session_id = session_id_str.groups()[0]
     account_id = account_id_str.groups()[0]
+    steam_country = steam_country_str.group().replace(", '", "")
+    steam_country = steam_country.replace("',", "")
+    # print(steam_country)
     return {
         'session_id': session_id,
         'account_id': account_id,
+        'steam_country': steam_country
     }
 
 # 注入 Script 脚本
@@ -103,7 +117,7 @@ def data_deal(request_params):
                 proxy_result.html.html)
             # print(steam_params)
             if steam_params:
-                delivery_scripts = generate_delivery_game_script(DELIVERY_AREA, steam_params['session_id'])
+                delivery_scripts = generate_delivery_game_script(DELIVERY_AREA, steam_params['session_id'], steam_params['steam_country'])
                 new_response = insert_scripts_to_response_content(proxy_result.html.html,
                                                                 delivery_scripts)
 
